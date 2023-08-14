@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <br/>
+    <br/>
+    <h1>
+        {% ifequal user.groups.all.0.name "moderatorzy" %}
+            Urlopy użytkowników
+        {% else %}
+            Moje urlopy
+        {% endifequal %}
+
+    </h1>
+    <div>
+        <a class="btn btn-secondary" href="{% url 'add_vacation' %}" role="button" style="float:right">Dodaj urlop</a>
+    </div>
+    <table class="table" style="margin-top: 5%;">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Dzień urlopu od</th>
+            <th scope="col">Dzień urlopu do</th>
+            <th scope="col">Czy zaakceptowany</th>
+            <th scope="col">Użytkownik</th>
+            <th scope="col">Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if context %}
+            {% for each in context %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ each.dateFrom|date:"d-m-Y" }}</td>
+                    <td>{{ each.dateTo|date:"d-m-Y" }}</td>
+                    <td>{{ each.accepted|yesno:"Tak,Nie" }}</td>
+                    <td>{{ each.user.username | capfirst }}</td>
+                    <td>
+                        {% ifequal user.groups.all.0.name "moderatorzy" %}
+                            <a href="{% url 'edit_vacation' each.id %}" class="btn btn-primary">Edytuj</a>
+                            <a href="{% url 'delete_vacation' each.id %}" class="btn btn-danger">Usuń</a>
+                        {% else %}
+                            {% if not each.accepted %}
+                                <a href="{% url 'edit_vacation' each.id %}" class="btn btn-primary">Edytuj</a>
+                            {% endif %}
+                        {% endifequal %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <th>Brak</th>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}

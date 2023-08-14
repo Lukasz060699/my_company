@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <br/>
+    <h3>Najwięcej sprzedaży wykonali:</h3>
+    <div class="row">
+        <div class="col-lg-12 mx-auto">
+            <div class="list-group">
+                {% for each in countSold %}
+                    {% if forloop.counter <= 3 %}
+                    <a href="#"
+                       class="list-group-item list-group-item-action flex-column align-items-start {% if forloop.counter|divisibleby:2 %}active{% endif %}">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ each.username }} sprzedał: {{ each.total }} razy</h5>
+                        </div>
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <br/>
+    <h1>
+        {% ifequal user.groups.all.0.name "moderatorzy" %}
+            Wyniki sprzedażowe
+        {% else %}
+            Moje wyniki sprzedażowe -> zarobiłem {{ myScore }}zł
+        {% endifequal %}
+
+    </h1>
+    {% ifequal user.groups.all.0.name "moderatorzy" %}
+        <div>
+            <a class="btn btn-secondary" href="{% url 'add_salesResults' %}" role="button" style="float:right">Dodaj
+                wynik sprzedażowy</a>
+        </div>
+    {% endifequal %}
+    <table class="table" style="margin-top: 5%;">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Data sprzedaży</th>
+            <th scope="col">Cena</th>
+            <th scope="col">Użytkownik</th>
+            <th scope="col">Dodatkowy opis</th>
+            {% ifequal user.groups.all.0.name "moderatorzy" %}
+                <th scope="col">Akcje</th>
+            {% endifequal %}
+        </tr>
+        </thead>
+        <tbody>
+        {% if context %}
+            {% for each in context %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ each.date|date:"d-m-Y" }}</td>
+                    <td>{{ each.price }}zł</td>
+                    <td>{{ each.user.username | capfirst }}</td>
+                    <td>{{ each.info | capfirst }}</td>
+                    {% ifequal user.groups.all.0.name "moderatorzy" %}
+                        <td>
+                            <a href="{% url 'edit_salesResults' each.id %}" class="btn btn-primary">Edytuj</a>
+                            <a href="{% url 'delete_salesResults' each.id %}" class="btn btn-danger">Usuń</a>
+                        </td>
+                    {% endifequal %}
+
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <th>Brak</th>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}

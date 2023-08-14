@@ -1,0 +1,12 @@
+input, textarea, select{
+    width: 100%;
+}
+
+input[type="checkbox"] {
+  width: unset !important;
+}
+
+
+form .btn{
+    margin-bottom: 20px;
+}

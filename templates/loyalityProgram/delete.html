@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <br/>
+    <br/>
+    <h1>Usuń wpis</h1>
+    <br/>
+    <br/>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <p>Na pewno usunąć?</p>
+        <div class="row">
+            <div class="col-6">
+                <input type="submit" name="" value="Tak" class="btn btn-success ">
+            </div>
+            <div class="col-6">
+                <a href="{% url 'workSchedule' %}" class="btn btn-danger w-100">Cofnij</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}

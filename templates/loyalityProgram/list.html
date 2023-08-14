@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <br/>
+    <h3>Dotychczas otrzymałeś dodatkowe punkty za:</h3>
+    <span>{{ request.user.userprofile.info | linebreaks }}</span>
+    <br/>
+    <h1>
+        {% ifequal user.groups.all.0.name "moderatorzy" %}
+            Nagrody użytkowników
+        {% else %}
+            Moje nagrody (dotychczas zebrałeś {{ request.user.userprofile.balance }} punkt/puntków)
+        {% endifequal %}
+    </h1>
+    {% ifequal user.groups.all.0.name "moderatorzy" %}
+        <div>
+            <a class="btn btn-secondary" href="{% url 'add_loyalityProgram' %}" role="button" style="float:right">Dodaj
+                nagrodę</a>
+        </div>
+    {% endifequal %}
+<table class="table" style="margin-top: 5%;">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Cena punktów</th>
+            <th scope="col">Nagroda</th>
+            <th scope="col">Opis</th>
+            <th scope="col">Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if context %}
+            {% for each in context %}
+            {% if each.user is none %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ each.price }} pkt</td>
+                    <td>{{ each.title | capfirst }}</td>
+                    <td>{{ each.info | capfirst }}</td>
+                    <td>
+                        {% ifequal user.groups.all.0.name "moderatorzy" %}
+                            {% if not each.user %}
+                                <a href="{% url 'getItem_loyalityProgram' each.id %}"
+                                   class="btn btn-primary w-100 mb-2">Odbierz
+                                    nagrodę</a>
+                                <a href="{% url 'delete_loyalityProgram' each.id %}" class="btn btn-danger w-100">Usuń
+                                    nagrodę</a>
+
+                            {% endif %}
+                        {% else %}
+                            {% if not each.user %}
+                                <a href="{% url 'getItem_loyalityProgram' each.id %}" class="btn btn-primary w-100">Odbierz
+                                    nagrodę</a>
+                            {% endif %}
+                        {% endifequal %}
+                    </td>
+                </tr>
+            {% endif %}
+            {% endfor %}
+        {% else %}
+            <tr>
+                <th>Brak</th>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+<br/>
+<h1>Wykorzystane punkty:</h1>
+    <table class="table" style="margin-top: 5%;">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Odbiorca nagrody</th>
+            <th scope="col">Cena punktów</th>
+            <th scope="col">Nagroda</th>
+            <th scope="col">Opis</th>
+            <th scope="col">Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if context %}
+            {% for each in context %}
+            {% if each.user is not none %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ each.user.username | capfirst }}</td>
+                    <td>{{ each.price }} pkt</td>
+                    <td>{{ each.title | capfirst }}</td>
+                    <td>{{ each.info | capfirst }}</td>
+                    <td>
+                        {% ifequal user.groups.all.0.name "moderatorzy" %}
+                            {% if each.user %}
+                                Nagroda przypisana
+                            {% endif %}
+                        {% else %}
+                            {% if each.user %}
+                                Nagroda odebrana
+                            {% endif %}
+                        {% endifequal %}
+                    </td>
+                </tr>
+            {% endif %}
+            {% endfor %}
+        {% else %}
+            <tr>
+                <th>Brak</th>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}

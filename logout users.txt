@@ -1,0 +1,9 @@
+{% if request.user.is_superuser %}
+                                administratorze
+                            {% else %}
+                                {% ifequal user.groups.all.0.name "moderatorzy" %}
+                                    moderatorze
+                                {% else %}
+                                    użytkowniku
+                                {% endifequal %}
+                            {% endif %}

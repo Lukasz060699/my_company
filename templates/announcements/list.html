@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <br/>
+    <br/>
+    <h1>
+        Zarządzaj ogłoszeniami z strony głównej
+    </h1>
+    {% ifequal user.groups.all.0.name "moderatorzy" %}
+    <div>
+        <a class="btn btn-secondary" href="{% url 'add_announcements' %}" role="button" style="float:right">Dodaj ogłoszenie na stronę główną</a>
+    </div>
+    {% endifequal %}
+    <table class="table" style="margin-top: 5%;">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Data dodania</th>
+            <th scope="col">Tytuł</th>
+                <th scope="col">Akcje</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if context %}
+            {% for each in context %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ each.date|date:"d-m-Y" }}</td>
+                    <td>{{ each.title | capfirst }}</td>
+                        <td>
+                            <a href="{% url 'edit_announcements' each.id %}" class="btn btn-primary">Edytuj</a>
+                            <a href="{% url 'delete_announcements' each.id %}" class="btn btn-danger">Usuń</a>
+                        </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <th>Brak</th>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+{% endblock %}
